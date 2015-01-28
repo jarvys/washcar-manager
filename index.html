@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+        <link rel="stylesheet" type="text/css" href="css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+		
+        <title>CarSerive</title>
+    </head>
+    <body>
+	<script type="text/javascript">
+	   if(navigator.userAgent.match(/iP[ha][od].*OS 7/)) {
+	    document.addEventListener("touchstart", function(e){
+		    var target = e.target;
+            while (target.nodeType != 1) target = target.parentNode;
+		    if (target.tagName != 'SELECT' && target.tagName != 'INPUT' && target.tagName != 'TEXTAREA'){
+				e.preventDefault();
+			}
+		});
+        document.write('<style type="text/css">body{-webkit-transform: translate3d(0,20px,0)}</style>');
+      } 
+</script>
+	    <div class="app">
+		   <header class="app-header">
+		       <span class="label">管理端</span>
+		   </header>
+		   <div class="search">
+		       <div class="search-holder">
+		           <input type="search"></input>
+                   <div class="placeholder">
+                       <span class="icon sec">搜索订单</span>
+                   </div>
+			       <div class="xxx"></div>
+		       </div>
+		   </div>
+		   <div id="order-list">
+		       <div class="wrapper">
+			      <ul id="id-order-list"></ul>
+			   </div>
+		   </div>
+		   
+		   <div id="order-header">
+		      <div class="menu-status">
+			      
+				  <div class="menu">
+				     <ul>
+					    <li data-item="1">全部订单</li>
+					    <li data-item="2">待分配</li>
+						<li data-item="3">服务中</li>
+						<li data-item="4">已完成</li>
+					 </ul>
+				  </div>
+                  <span class="label">全部订单</span>
+			  </div>
+			  <div class="menu-account">
+			      
+				  <div class="menu">
+				     <ul>
+					    
+					 </ul>
+				  </div>
+                  <span class="label">洗车技师</span>
+			  </div>
+			  <div  class="split"></div>
+		   </div>
+           
+		   <div id="works-list">
+		       <div class="bg"></div>
+               <div id="worker-iscroller">
+                  <div id="wrapper-list">
+                  </div>
+                  <div class="close"></div>
+               </div>
+		   </div>
+           
+           <div id="works-notes" style="display: none">
+              <div class="view">
+                 <textarea></textarea>
+				 <div class="main-btn">
+				     <button class="save">保存</button>
+				 </div>
+                 <div class="close"></div>
+              </div>
+           </div>
+		   
+		   <div id="id-pay-status" style="display: none">
+		       <div class="ctn">
+			      <ul>
+			       <li data-i="0" class="red">未支付 <em></em></li>
+				   <li data-i="1" class="black">已支付 <em></em></li>
+				   <!--li data-i="2">上门支付</li -->
+				  </ul>
+                  <div class="close"></div>
+			   </div>
+		   </div>
+           
+           <div id="id-order-status" style="display: none">
+		       <div class="ctn">
+			      <ul>
+			       <li data-item="0" class="red">待分配 <em></em></li>
+					<li data-item="1" class="blue">服务中 <em></em></li>
+					<li data-item="2" class="black">已完成 <em></em></li>
+				  </ul>
+                  <div class="close"></div>
+			   </div>
+		   </div>
+		   
+		   
+		   <div id="alert-dialog" class="alert-dialog" style="display:none">
+		        <div class="ctn">
+			        <p class="text"></p>
+			        <div class="tools main-btn">
+			          <button>确定</button>
+			        </div>
+			    </div>
+		   </div>
+		   
+		   <div id="c-loading">
+			    <div class="sprite-con">
+				    <div class="sprite"></div>
+					<p>正在加载...</p>
+				</div>
+			</div>
+		</div>
+	</body>
+	
+    <script type="text/tpl" id="temp-worker-item">
+        <div  worker-id="<%=id%>" class="worker-item">
+           <p><span class="sec">技师：</span><span><%=name%></span></p>
+           <p><span class="sec">联系电话：</span><span><%=cellPhone%></span></p>
+        </div>
+    </script>
+    
+	<script type="text/tpl" id="temp-order-item">
+	    <%for(var i=0; i < list.length; i++){%>
+		  <li class="order-item" id="<%=list[i].orderNumber%>">
+		     <h3 class="order-status">
+                 <span class="sec">状态：</span> <span class="status <%=list[i].color%>"> <%=list[i].statusText%> </span>
+                 
+                 <button class="edit" order-id="<%=list[i].orderNumber%>"></button>
+             </h3>
+			 
+			 <p> 
+			     <span class="sec">用户： </span> <span> <%=list[i].accountName%> </span> 
+		     </p>
+			 
+			 <p> 
+			    <span class="sec">车辆信息： </span>
+			    <span><%=list[i].brand%></span>
+			    <span><%=list[i].model%></span> 
+			    <span><%=list[i].license%></span>
+			 </p>
+			 
+			 <p class="order-number"> 
+			     <span class="sec">订单号： </span> <span> <%=list[i].orderNumber%> </span> 
+		     </p>
+			 
+			 <p><span class="sec">预约时间： </span><%=list[i].serviceTime%></p>
+			 
+			 
+			 <p><span class="sec">地址： </span><%=list[i].address%></p>
+			 <p><span class="sec">选择服务： </span><%=list[i].serviceList%> </p>
+			 
+			 <p><span class="sec">订单金额： </span> <span style="color:#2abec8"> ￥<%=list[i].totalPrice%> </span></p>
+			 
+			 <h3 class="wkr">
+                <p><span class="sec">技师：</span> <span class="wkr-label"><%=list[i].worker%></span> </p>
+				<p><span class="sec">联系电话：</span><span class="wkr-cell"><%=list[i].workerNumber%></span></p>
+				
+				<em class="edit"></em>
+				
+                <span class="woker-view" style="display:none"><em data-id="<%=list[i].orderNumber%>" class="undo-worker">分配</em></span> 
+             </h3>
+			 <h3 class="pay-status">
+			     <span class="sec">付款状态：</span>
+				 <span  class=" ps <%=list[i].payColor%>"><%=list[i].payStatus%></span>
+				 <div class="edit"></div>
+		     </h3>
+			 <h3 class="notes">
+                <p><span class="sec" style="line-height:38px">备注：</span><span class="n-ctn"><%=list[i].notes%></span></p>
+				<div class="edit"></div>
+             </h3>
+			 
+			 <!--div class="edit-menu">
+			    <ul>
+				    <li data-item="0">待分配</li>
+					<li data-item="1">服务中</li>
+					<li data-item="2">已完成</li>
+				</ul>
+			 </div-->
+		  </li>
+		<%}%>
+	</script>
+	
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/underscore.js"></script>
+	<script type="text/javascript" src="js/event.js"></script>
+	<script type="text/javascript" src="js/iscroll.js"></script>
+	<script type="text/javascript" src="js/calendar.js"></script>
+	<script type="text/javascript" src="js/fastclick.js"></script>
+	
+	<script type="text/javascript" src="js/UI.js"></script>
+	
+	<script type="text/javascript" src="js/manager.js"></script>
+</html>
