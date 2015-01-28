@@ -24,7 +24,7 @@ Date.prototype.format = function(fmt) {
 
 $(function(){
     FastClick.attach(document.body);
-	var Host = "http://192.168.1.101:8080/";
+	var Host = "http://devel.jarvys.me/";
 	
 	function post(path, data, success, error){
 	    $('#c-loading').show()
